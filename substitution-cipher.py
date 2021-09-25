@@ -48,32 +48,58 @@ def encrypt(msg_file, keyOption, key_file, output_file):
             print("INVALID KEY SIZE..EXITING..")
             exit(0)
     
-    plainText = list(pt)[0]  
+    plainText = "".join(i for i in list(pt))
     terms = plainText.split()
+
 
     print("Encrypting the provided text....")
     cipherText = ""
 
     for i in terms: 
         temp = [] 
+        i = i.replace('.', '')
+
         for j in i:
             if ord(j)>96:
-                temp.append(key[ord(j)-97])
+                temp.append(key[ord(j)-ord('a')])
             else:
-                temp.append(key[ord(j)-65])
+                temp.append(key[ord(j)-ord('A')])
         
         cipherText += "".join(i for i in temp)
     
     fp = open(output_file, "w") 
     fp.write(cipherText)
 
-    print("\n Encryption Successful.. \n Output now saved in the file..")
-
-
-
-
+    print("\nEncryption Successful.. \nOutput now saved in the file..")
+ 
 
 # Decrypt
+def decrypt(cipher_file, key_file): 
+    filesize = os.path.getsize(cipher_file)
+    if filesize == 0:
+        print("No cipher file present.... Retry...")
+        return
+
+    filesize = os.path.getsize(key_file)
+    if filesize == 0:
+        print("No key file present.... Retry...")
+        return
+
+    ct = open(cipher_file, "r")
+    cipherText = list(ct)[0] 
+
+    kt = open(key_file, "r")
+    key = list("".join(i for i in list(kt)))
+
+    print("Decrypting the provided text....")
+    plainText = ""
+
+
+    for i in cipherText:
+        plainText += chr(ord('A') + key.index(i))
+
+    print("Your decrypted text is : ", plainText)
+
 if __name__ == "__main__":
     print("****** SUBSTITUTION CIPHER ******")
     
@@ -102,7 +128,16 @@ if __name__ == "__main__":
             encrypt(msg_file, keyOption, key_file, output_file)
 
         elif (ch == "2"):
-            print("\nEncryption for Substitution Cipher")
+            print("\nDecryption for Substitution Cipher")
+
+            print("Enter cipher text file name : ", end="")
+            cipher_file = input() 
+
+            print("Enter Key File name : ", end="")
+            key_file = input() 
+
+            decrypt(cipher_file, key_file)
+
 
         elif(ch == "3"):
             print("\nExiting...")
